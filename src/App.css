@@ -1,0 +1,39 @@
+html, body, #root, .app-container {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.app-container {
+  display: flex;
+  height: 100%;
+  background: #121212;
+}
+
+.sidebar {
+  width: 200px;
+  background: #1a1a1a;
+  padding: 20px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  background: #222;
+}
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
+
