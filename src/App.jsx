@@ -199,6 +199,16 @@ function App() {
   );
 }
 
+function App() {
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>🚀 Sportpit App</h1>
+      <p>Наш сайт тепер працює онлайн!</p>
+    </div>
+  );
+}
+
+
 export default App;
 
 
