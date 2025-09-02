@@ -1,11 +1,11 @@
+// App.jsx
 import { useState, useEffect } from "react";
 
-// Компоненти Sidebar і Header можна зробити прямо тут
 function Sidebar() {
   return (
     <div className="sidebar">
-      <h2 style={{ color: "#fff", textAlign: "center" }}>Меню</h2>
-      <ul style={{ listStyle: "none", padding: "0", color: "#fff" }}>
+      <h2>Меню</h2>
+      <ul>
         <li>📦 Товари</li>
         <li>📊 Статистика</li>
         <li>⚙️ Налаштування</li>
@@ -16,9 +16,9 @@ function Sidebar() {
 
 function Header() {
   return (
-    <div className="header">
+    <header className="header">
       <h1>📦 Офіцерський пептід</h1>
-    </div>
+    </header>
   );
 }
 
@@ -37,14 +37,11 @@ function Content() {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleAddOrEdit = (e) => {
     e.preventDefault();
     if (!form.name || !form.quantity || !form.customer || !form.date) return;
-
     if (editIndex !== null) {
       const updated = [...products];
       updated[editIndex] = form;
@@ -53,7 +50,6 @@ function Content() {
     } else {
       setProducts([...products, form]);
     }
-
     setForm({ name: "", quantity: "", customer: "", date: "" });
   };
 
@@ -65,10 +61,7 @@ function Content() {
     }
   };
 
-  const handleEdit = (index) => {
-    setForm(products[index]);
-    setEditIndex(index);
-  };
+  const handleEdit = (index) => setForm(products[index]) || setEditIndex(index);
 
   const filteredProducts = products.filter(
     (p) =>
@@ -78,120 +71,60 @@ function Content() {
 
   return (
     <div className="content">
-      <div style={{ padding: "20px" }}>
-        {/* Пошук */}
-        <input
-          type="text"
-          placeholder="🔍 Пошук за назвою або клієнтом"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "20px",
-            borderRadius: "5px",
-            border: "none",
-            fontSize: "16px",
-          }}
-        />
-
-        {/* Форма */}
-        <form
-          onSubmit={handleAddOrEdit}
-          style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "20px" }}
-        >
-          <input type="text" name="name" placeholder="Назва товару" value={form.name} onChange={handleChange} required style={inputStyle}/>
-          <input type="number" name="quantity" placeholder="Кількість" value={form.quantity} onChange={handleChange} required style={inputStyle}/>
-          <input type="text" name="customer" placeholder="Кому відправлено" value={form.customer} onChange={handleChange} required style={inputStyle}/>
-          <input type="date" name="date" value={form.date} onChange={handleChange} required style={inputStyle}/>
-          <button type="submit" style={buttonStyle}>{editIndex !== null ? "✏️ Зберегти" : "➕ Додати"}</button>
-        </form>
-
-        {/* Таблиця */}
-        <div style={{ overflowY: "auto", maxHeight: "calc(100vh - 250px)" }}>
-          {filteredProducts.length === 0 ? (
-            <p style={{ textAlign: "center" }}>Немає даних</p>
-          ) : (
-            <table style={tableStyle}>
-              <thead>
-                <tr>
-                  <th>Назва</th>
-                  <th>Кількість</th>
-                  <th>Кому</th>
-                  <th>Дата</th>
-                  <th>Дії</th>
+      <input
+        type="text"
+        placeholder="🔍 Пошук"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="search-input"
+      />
+      <form onSubmit={handleAddOrEdit} className="form">
+        <input type="text" name="name" placeholder="Назва товару" value={form.name} onChange={handleChange} required />
+        <input type="number" name="quantity" placeholder="Кількість" value={form.quantity} onChange={handleChange} required />
+        <input type="text" name="customer" placeholder="Кому відправлено" value={form.customer} onChange={handleChange} required />
+        <input type="date" name="date" value={form.date} onChange={handleChange} required />
+        <button type="submit">{editIndex !== null ? "✏️ Зберегти" : "➕ Додати"}</button>
+      </form>
+      <div className="table-container">
+        {filteredProducts.length === 0 ? (
+          <p className="no-data">Немає даних</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Назва</th>
+                <th>Кількість</th>
+                <th>Кому</th>
+                <th>Дата</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredProducts.map((p, i) => (
+                <tr key={i} className={i % 2 === 0 ? "even" : "odd"}>
+                  <td>{p.name}</td>
+                  <td>{p.quantity}</td>
+                  <td>{p.customer}</td>
+                  <td>{p.date}</td>
+                  <td>
+                    <button onClick={() => handleEdit(i)} className="edit-btn">✏️</button>
+                    <button onClick={() => handleDelete(i)} className="delete-btn">❌</button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map((p, i) => (
-                  <tr key={i} style={{ background: i % 2 === 0 ? "#1f1f1f" : "#2a2a2a" }}>
-                    <td>{p.name}</td>
-                    <td>{p.quantity}</td>
-                    <td>{p.customer}</td>
-                    <td>{p.date}</td>
-                    <td style={{ display: "flex", gap: "5px" }}>
-                      <button onClick={() => handleEdit(i)} style={editButtonStyle}>✏️</button>
-                      <button onClick={() => handleDelete(i)} style={deleteButtonStyle}>❌</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 }
 
-// Стилі
-const inputStyle = {
-  padding: "10px",
-  borderRadius: "5px",
-  border: "none",
-  fontSize: "14px",
-  flex: "1 1 200px",
-};
-
-const buttonStyle = {
-  padding: "10px 20px",
-  borderRadius: "5px",
-  border: "none",
-  background: "#4caf50",
-  color: "#fff",
-  cursor: "pointer",
-  fontSize: "14px",
-};
-
-const editButtonStyle = {
-  padding: "5px 10px",
-  borderRadius: "5px",
-  border: "none",
-  background: "#2196f3",
-  color: "#fff",
-  cursor: "pointer",
-};
-
-const deleteButtonStyle = {
-  padding: "5px 10px",
-  borderRadius: "5px",
-  border: "none",
-  background: "#f44336",
-  color: "#fff",
-  cursor: "pointer",
-};
-
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  fontSize: "14px",
-};
-
 function App() {
   return (
-    <div className="app-container">
+    <div className="app">
       <Sidebar />
-      <div className="main-content">
+      <div className="main">
         <Header />
         <Content />
       </div>
@@ -199,19 +132,13 @@ function App() {
   );
 }
 
-function App() {
-  return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>🚀 Sportpit App</h1>
-      <p>Наш сайт тепер працює онлайн!</p>
-    </div>
-  );
-}
-
+<div className="app">
+  <Sidebar />
+  <div className="main">
+    <Header />
+    <Content />
+  </div>
+</div>
 
 export default App;
-
-
-
-
 
