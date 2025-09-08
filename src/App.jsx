@@ -51,24 +51,10 @@ function Sidebar({ onSelect, activeView }) {
     <div className="sidebar">
       <h2>Меню</h2>
       <ul>
-        <li
-          className={activeView === "products" ? "active" : ""}
-          onClick={() => onSelect("products")}
-        >
-          📦 Товари
-        </li>
-        <li
-          className={activeView === "stats" ? "active" : ""}
-          onClick={() => onSelect("stats")}
-        >
-          📊 Статистика
-        </li>
-        <li
-          className={activeView === "settings" ? "active" : ""}
-          onClick={() => onSelect("settings")}
-        >
-          ⚙️ Налаштування
-        </li>
+        <li className={activeView === "products" ? "active" : ""} onClick={() => onSelect("products")}>📦 Товари</li>
+        <li className={activeView === "shipment" ? "active" : ""} onClick={() => onSelect("shipment")}>✉️ Відправка</li>
+        <li className={activeView === "stats" ? "active" : ""} onClick={() => onSelect("stats")}>📊 Статистика</li>
+        <li className={activeView === "settings" ? "active" : ""} onClick={() => onSelect("settings")}>⚙️ Налаштування</li>
       </ul>
     </div>
   );
@@ -82,15 +68,14 @@ function Header() {
   );
 }
 
-function Content({ view }) {
+function Content({ view, theme, toggleTheme }) {
   const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem("products");
-    return saved ? JSON.parse(saved) : initialProducts;
+    return JSON.parse(localStorage.getItem("products")) || initialProducts;
   });
-
   const [form, setForm] = useState({ name: "", quantity: "", customer: "", date: "" });
   const [editIndex, setEditIndex] = useState(null);
   const [search, setSearch] = useState("");
+  const [shipmentList, setShipmentList] = useState([]);
 
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
@@ -100,13 +85,7 @@ function Content({ view }) {
 
   const handleAddOrEdit = (e) => {
     e.preventDefault();
-    if (!form.name || !form.quantity || !form.customer || !form.date) return;
-
-    if (Number(form.quantity) <= 0) {
-      alert("❌ Кількість має бути більше нуля!");
-      return;
-    }
-
+    if (!form.name || !form.quantity) return;
     if (editIndex !== null) {
       const updated = [...products];
       updated[editIndex] = form;
@@ -128,36 +107,30 @@ function Content({ view }) {
 
   const handleEdit = (i) => setForm(products[i]) || setEditIndex(i);
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.customer.toLowerCase().includes(search.toLowerCase())
+  const handleSend = (i) => {
+    const prod = products[i];
+    const name = prompt("Кому відправлено?", prod.customer || "");
+    const date = prompt("Введіть дату відправки (YYYY-MM-DD)", prod.date || "");
+    if (name && date) {
+      const updated = [...products];
+      updated[i] = { ...prod, customer: name, date };
+      setProducts(updated);
+      setShipmentList([...shipmentList, { ...prod, customer: name, date }]);
+    }
+  };
+
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity), 0);
-
-  // статистика по клієнтах
-  const customerStats = products.reduce((acc, p) => {
-    if (!p.customer) return acc;
-    acc[p.customer] = (acc[p.customer] || 0) + Number(p.quantity);
-    return acc;
-  }, {});
-
   if (view === "stats") {
+    const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity), 0);
     return (
       <div className="content">
         <div className="stats">
           <div>📦 Всього товарів: {products.length}</div>
           <div>📊 Загальна кількість: {totalQuantity}</div>
         </div>
-        <h3>👥 Відвантаження по клієнтах:</h3>
-        <ul>
-          {Object.entries(customerStats).map(([client, qty]) => (
-            <li key={client}>
-              {client}: {qty}
-            </li>
-          ))}
-        </ul>
       </div>
     );
   }
@@ -166,11 +139,46 @@ function Content({ view }) {
     return (
       <div className="content">
         <h2>⚙️ Налаштування сайту</h2>
-        <p>Тут можна додати налаштування.</p>
+        <button onClick={toggleTheme}>
+          {theme === "dark" ? "Світла тема" : "Темна тема"}
+        </button>
       </div>
     );
   }
 
+  if (view === "shipment") {
+    return (
+      <div className="content">
+        <h2>✉️ Відправка товарів</h2>
+        {shipmentList.length === 0 ? (
+          <p className="no-data">Немає відправлених товарів</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Назва</th>
+                <th>Кількість</th>
+                <th>Кому</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shipmentList.map((p, i) => (
+                <tr key={i}>
+                  <td>{p.name}</td>
+                  <td>{p.quantity}</td>
+                  <td>{p.customer}</td>
+                  <td>{p.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    );
+  }
+
+  // Default: products view
   return (
     <div className="content">
       <input
@@ -183,10 +191,9 @@ function Content({ view }) {
       <form onSubmit={handleAddOrEdit} className="form">
         <input type="text" name="name" placeholder="Назва товару" value={form.name} onChange={handleChange} required />
         <input type="number" name="quantity" placeholder="Кількість" value={form.quantity} onChange={handleChange} required />
-        <input type="text" name="customer" placeholder="Кому відправлено" value={form.customer} onChange={handleChange} required />
-        <input type="date" name="date" value={form.date} onChange={handleChange} required />
         <button type="submit">{editIndex !== null ? "✏️ Зберегти" : "➕ Додати"}</button>
       </form>
+
       <div className="table-container">
         {filteredProducts.length === 0 ? (
           <p className="no-data">Немає даних</p>
@@ -196,21 +203,18 @@ function Content({ view }) {
               <tr>
                 <th>Назва</th>
                 <th>Кількість</th>
-                <th>Кому</th>
-                <th>Дата</th>
                 <th>Дії</th>
               </tr>
             </thead>
             <tbody>
               {filteredProducts.map((p, i) => (
-                <tr key={i} className={i % 2 === 0 ? "even" : "odd"}>
+                <tr key={i}>
                   <td>{p.name}</td>
                   <td>{p.quantity}</td>
-                  <td>{p.customer}</td>
-                  <td>{p.date}</td>
                   <td>
                     <button onClick={() => handleEdit(i)} className="edit-btn">✏️</button>
                     <button onClick={() => handleDelete(i)} className="delete-btn">❌</button>
+                    <button onClick={() => handleSend(i)} className="send-btn">✉️ Відправити</button>
                   </td>
                 </tr>
               ))}
@@ -223,19 +227,29 @@ function Content({ view }) {
 }
 
 function App() {
-  const [view, setView] = useState(null); // Спочатку нічого не показуємо
+  const [view, setView] = useState("products");
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
+
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => (prev === "dark" ? "light" : "dark"));
+
   return (
     <div className="app">
       <Sidebar onSelect={setView} activeView={view} />
       <div className="main">
         <Header />
-        {view ? <Content view={view} /> : <div className="content"><p>Виберіть пункт меню</p></div>}
+        <Content view={view} theme={theme} toggleTheme={toggleTheme} />
       </div>
     </div>
   );
 }
 
 export default App;
+
 
 
 
