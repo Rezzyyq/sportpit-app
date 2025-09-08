@@ -83,7 +83,11 @@ function Header() {
 }
 
 function Content({ view }) {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem("products");
+    return saved ? JSON.parse(saved) : initialProducts;
+  });
+
   const [form, setForm] = useState({ name: "", quantity: "", customer: "", date: "" });
   const [editIndex, setEditIndex] = useState(null);
   const [search, setSearch] = useState("");
@@ -93,9 +97,16 @@ function Content({ view }) {
   }, [products]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
   const handleAddOrEdit = (e) => {
     e.preventDefault();
     if (!form.name || !form.quantity || !form.customer || !form.date) return;
+
+    if (Number(form.quantity) <= 0) {
+      alert("❌ Кількість має бути більше нуля!");
+      return;
+    }
+
     if (editIndex !== null) {
       const updated = [...products];
       updated[editIndex] = form;
@@ -106,6 +117,7 @@ function Content({ view }) {
     }
     setForm({ name: "", quantity: "", customer: "", date: "" });
   };
+
   const handleDelete = (i) => {
     if (window.confirm("Видалити товар?")) {
       const updated = [...products];
@@ -113,6 +125,7 @@ function Content({ view }) {
       setProducts(updated);
     }
   };
+
   const handleEdit = (i) => setForm(products[i]) || setEditIndex(i);
 
   const filteredProducts = products.filter(
@@ -123,6 +136,13 @@ function Content({ view }) {
 
   const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity), 0);
 
+  // статистика по клієнтах
+  const customerStats = products.reduce((acc, p) => {
+    if (!p.customer) return acc;
+    acc[p.customer] = (acc[p.customer] || 0) + Number(p.quantity);
+    return acc;
+  }, {});
+
   if (view === "stats") {
     return (
       <div className="content">
@@ -130,6 +150,14 @@ function Content({ view }) {
           <div>📦 Всього товарів: {products.length}</div>
           <div>📊 Загальна кількість: {totalQuantity}</div>
         </div>
+        <h3>👥 Відвантаження по клієнтах:</h3>
+        <ul>
+          {Object.entries(customerStats).map(([client, qty]) => (
+            <li key={client}>
+              {client}: {qty}
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
@@ -143,7 +171,6 @@ function Content({ view }) {
     );
   }
 
-  // Основний вид - Товари
   return (
     <div className="content">
       <input
@@ -209,6 +236,13 @@ function App() {
 }
 
 export default App;
+
+
+
+ 
+
+
+
 
 
 
