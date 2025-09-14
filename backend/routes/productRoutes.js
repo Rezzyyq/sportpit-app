@@ -3,29 +3,55 @@ import Product from "../models/Product.js";
 
 const router = express.Router();
 
-// GET /api/products – отримати всі товари
+// GET всі товари
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find();
     res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: "Помилка сервера", error: error.message });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
-
-// POST /api/products – додати новий товар
+// POST додати новий товар
 router.post("/", async (req, res) => {
+  const { name, quantity } = req.body;
+  const product = new Product({ name, quantity });
+
   try {
-    const { name, quantity } = req.body;
-    const newProduct = new Product({ name, quantity });
-    const created = await newProduct.save();
-    res.status(201).json(created);
-  } catch (error) {
-    res.status(400).json({ message: "Помилка при додаванні товару", error: error.message });
+    const newProduct = await product.save();
+    res.status(201).json(newProduct);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
+// PUT редагувати товар
+router.put("/:id", async (req, res) => {
+  const { name, quantity } = req.body;
+
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { name, quantity },
+      { new: true }
+    );
+    res.json(updatedProduct);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// DELETE видалити товар
+router.delete("/:id", async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: "Товар видалено" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 export default router;
+
 
