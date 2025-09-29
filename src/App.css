@@ -8,20 +8,22 @@ html, body, #root {
 
 .app {
   display: flex;
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
+  height: auto;
 }
 
 .sidebar {
   width: 250px;
   min-width: 250px;
-  height: 100%;
+  min-height: 100vh;
   background-color: #2c3e50;
   color: white;
   padding: 20px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .sidebar h2 {
@@ -36,6 +38,7 @@ html, body, #root {
   border: none;
   cursor: pointer;
   text-align: left;
+  border-radius: 5px;
 }
 
 .sidebar button:hover {
@@ -44,10 +47,13 @@ html, body, #root {
 
 .main-content {
   flex: 1;
-  min-height: 100%;
+  min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
   transition: background-color 0.3s, color 0.3s;
+  background-color: #ecf0f1;
+  display: flex;
+  flex-direction: column;
 }
 
 .site-header {
@@ -58,28 +64,108 @@ html, body, #root {
 /* Product grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 товари в ряд */
-  gap: 15px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px; /* Зменшено з 50px до 30px */
+  margin-bottom: 20px;
+  flex: 1;
 }
 
 .product-card {
-  background-color: #ecf0f1; /* світла тема фон */
-  padding: 10px;
-  border-radius: 5px;
+  background-color: #ffffff;
+  padding: 15px;
+  border: 2px solid transparent;
+  border-image: linear-gradient(45deg, #d4a373, #e0c097) 1;
+  border-radius: 10px;
   text-align: center;
-  color: #333; /* колір тексту для світлої теми */
-  transition: background-color 0.3s, color 0.3s;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
+  margin: 15px;
 }
 
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.product-card .product-image {
+  width: 200px; /* Збільшено з 150px до 180px */
+  height: 200px; /* Збільшено з 150px до 180px */
+  margin-bottom: 15px;
+  border: 2px solid #e0c097;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.product-card .product-image:hover {
+  transform: scale(1.05);
+}
+
+.product-card .product-name {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: #4a2c2a;
+  font-weight: 600;
+  min-height: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-card .product-quantity {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #7a6a53;
+  font-style: italic;
+  min-height: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Кнопки на картках в один рядок */
+.product-card .button-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.product-card button {
+  padding: 6px;
+  margin: 0;
+  border: none;
+  border-radius: 4px;
+  background: linear-gradient(45deg, #d4a373, #b0865a);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  width: 35px;
+  height: 35px;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.product-card button:hover {
+  transform: scale(1.1);
+  background: linear-gradient(45deg, #b0865a, #d4a373);
+}
 
 /* Темна тема */
 .app.dark .product-card {
-  background-color: #2c3e50; /* темний фон */
-  color: #f5f5f5; /* світлий текст */
+  background-color: #2c3e50;
+  color: #f5f5f5;
+  border-image: linear-gradient(45deg, #4a5e7a, #6a8298) 1;
 }
 
 .app.light .main-content {
-  background-color: #f5f5f5;
+  background-color: #ecf0f1;
   color: #333;
 }
 
@@ -90,30 +176,57 @@ html, body, #root {
 
 .form input {
   margin-right: 10px;
-  padding: 5px;
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .form button {
-  padding: 5px 10px;
+  padding: 8px 15px;
+  border-radius: 4px;
 }
 
 .search-input {
-  margin-bottom: 10px;
-  padding: 5px;
+  margin-bottom: 15px;
+  padding: 8px;
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
+  border-radius: 4px;
 }
 
-/* Адаптивність для планшетів і телефонів */
-@media (max-width: 1024px) {
+/* Адаптивність */
+@media (max-width: 1200px) {
   .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 товари в ряд */
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    position: relative;
+  }
+  .app {
+    flex-direction: column;
+  }
+  .product-card button {
+    width: 30px;
+    height: 30px;
+  }
+  .product-card .product-image {
+    width: 140px; /* Зменшено з 180px для мобільних */
+    height: 140px;
   }
 }
 
 @media (max-width: 600px) {
-  .product-grid {
-    grid-template-columns: 1fr; /* 1 товар в ряд */
+  .form input, .form button {
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 
