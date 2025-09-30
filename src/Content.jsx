@@ -13,42 +13,26 @@ function Content({ view, theme, toggleTheme }) {
   const [shipmentList, setShipmentList] = useState([]);
 
   useEffect(() => {
-    const fetchOrLoadProducts = async () => {
+    const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Спроба завантажити з Serverless Function на Vercel
-        const response = await axios.get("/api/products");
+        const response = await axios.get("http://localhost:5000/api/products");
         const productsWithImages = response.data.map((product) => ({
           ...product,
           image: getProductImage(product.name),
         }));
         setProducts(productsWithImages);
-        // Зберігаємо в localStorage для резерву
-        localStorage.setItem("cachedProducts", JSON.stringify(productsWithImages));
         console.log("Товари завантажено з API:", productsWithImages);
       } catch (err) {
         setError("Не вдалося завантажити товари з API");
         console.error("Помилка API:", err);
-        // Якщо API не працює, завантажуємо з localStorage
-        const cachedProducts = localStorage.getItem("cachedProducts");
-        if (cachedProducts) {
-          const parsedProducts = JSON.parse(cachedProducts).map((product) => ({
-            ...product,
-            image: getProductImage(product.name),
-          }));
-          setProducts(parsedProducts);
-          console.log("Товари завантажено з localStorage:", parsedProducts);
-        } else {
-          setError("Немає кешованих даних");
-        }
       } finally {
         setLoading(false);
       }
     };
-    fetchOrLoadProducts();
+    fetchProducts();
   }, []);
 
-  // Функція для визначення URL зображення за назвою товару
   const getProductImage = (name) => {
     const imageMap = {
       "Glucosamine, Chondroitin, MSM plus Hyaluronic Acid (120 caps)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01071/v/95.jpg",
@@ -89,53 +73,26 @@ function Content({ view, theme, toggleTheme }) {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleAddOrEdit = async (e) => {
+  const handleAddOrEdit = (e) => {
     e.preventDefault();
     if (!form.name || !form.quantity) return;
     const newProduct = { ...form, image: form.image || getProductImage(form.name) };
-    try {
-      if (editIndex !== null && products[editIndex]?._id) {
-        const response = await axios.put(`/api/products?id=${products[editIndex]._id}`, newProduct);
-        const updatedProducts = products.map((p, i) => (i === editIndex ? response.data : p));
-        setProducts(updatedProducts);
-      } else {
-        const response = await axios.post("/api/products", newProduct);
-        setProducts([...products, response.data]);
-      }
-      // Оновлюємо localStorage
-      localStorage.setItem("cachedProducts", JSON.stringify(products));
-    } catch (err) {
-      console.error("Помилка при збереженні:", err);
-      if (editIndex !== null) {
-        const updated = [...products];
-        updated[editIndex] = newProduct;
-        setProducts(updated);
-      } else {
-        setProducts([...products, newProduct]);
-      }
-      localStorage.setItem("cachedProducts", JSON.stringify(products));
+    if (editIndex !== null) {
+      const updated = [...products];
+      updated[editIndex] = newProduct;
+      setProducts(updated);
+      setEditIndex(null);
+    } else {
+      setProducts([...products, newProduct]);
     }
-    setEditIndex(null);
     setForm({ name: "", quantity: "", customer: "", date: "", image: "" });
   };
 
-  const handleDelete = async (i) => {
+  const handleDelete = (i) => {
     if (window.confirm("Видалити товар?")) {
-      try {
-        if (products[i]?._id) {
-          await axios.delete(`/api/products?id=${products[i]._id}`);
-        }
-        const updated = [...products];
-        updated.splice(i, 1);
-        setProducts(updated);
-        localStorage.setItem("cachedProducts", JSON.stringify(updated));
-      } catch (err) {
-        console.error("Помилка при видаленні:", err);
-        const updated = [...products];
-        updated.splice(i, 1);
-        setProducts(updated);
-        localStorage.setItem("cachedProducts", JSON.stringify(updated));
-      }
+      const updated = [...products];
+      updated.splice(i, 1);
+      setProducts(updated);
     }
   };
 
@@ -153,13 +110,12 @@ function Content({ view, theme, toggleTheme }) {
       updated[i] = { ...prod, customer: name, date };
       setProducts(updated);
       setShipmentList([...shipmentList, { ...prod, customer: name, date }]);
-      localStorage.setItem("cachedProducts", JSON.stringify(updated));
     }
   };
 
-  const filteredProducts = Array.isArray(products) ? products.filter((p) =>
+  const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
-  ) : [];
+  );
 
   if (loading) return <div className="content">Завантаження...</div>;
   if (error) return <div className="content">Помилка: {error}</div>;
