@@ -39,6 +39,7 @@ html, body, #root {
   cursor: pointer;
   text-align: left;
   border-radius: 5px;
+  font-size: 16px; /* Збільшено для кращої читабельності */
 }
 
 .sidebar button:hover {
@@ -54,7 +55,7 @@ html, body, #root {
   background-color: #ecf0f1;
   display: flex;
   flex-direction: column;
-  overflow: visible; /* Додано для видимості вмісту */
+  overflow-y: auto; /* Додано для скролу, якщо контент великий */
 }
 
 .site-header {
@@ -69,8 +70,8 @@ html, body, #root {
   gap: 30px;
   margin-bottom: 20px;
   flex: 1;
-  min-height: 200px; /* Додано мінімальну висоту */
-  overflow: visible; /* Додано для видимості карток */
+  overflow-y: auto; /* Додано для скролу карток */
+  visibility: visible; /* Гарантує видимість */
 }
 
 .product-card {
@@ -89,9 +90,9 @@ html, body, #root {
   flex-direction: column;
   align-items: center;
   height: auto;
-  min-height: 300px; /* Додано мінімальну висоту для видимості */
   margin: 15px;
-  overflow: visible; /* Додано для видимості елементів всередині */
+  visibility: visible; /* Гарантує видимість */
+  overflow: visible;
 }
 
 .product-card:hover {
@@ -154,8 +155,6 @@ html, body, #root {
   font-size: 16px;
   width: 35px;
   height: 35px;
-  min-width: 35px; /* Додано для стабільності */
-  min-height: 35px; /* Додано для стабільності */
   transition: transform 0.2s, background 0.3s;
 }
 
@@ -200,35 +199,49 @@ html, body, #root {
   border-radius: 4px;
 }
 
-/* Адаптивність */
-@media (max-width: 1200px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+/* Адаптивність для телефонів */
 @media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: 1fr;
+  .app {
+    flex-direction: column; /* Сайдбар зверху, контент знизу */
   }
   .sidebar {
     width: 100%;
-    min-width: 0;
+    min-width: 100%;
     height: auto;
-    position: relative;
+    min-height: auto;
+    flex-direction: row; /* Кнопки сайдбару горизонтально */
+    justify-content: space-around;
+    padding: 10px;
   }
-  .app {
-    flex-direction: column;
+  .sidebar button {
+    width: auto;
+    flex: 1;
+    margin: 0 5px;
+    text-align: center;
   }
-  .product-card button {
-    width: 40px; /* Збільшено для кращого сенсорного вводу */
-    height: 40px; /* Збільшено для кращого сенсорного вводу */
-    min-width: 40px;
-    min-height: 40px;
+  .sidebar h2 {
+    display: none; /* Приховуємо заголовок "Меню" на мобільних */
+  }
+  .product-grid {
+    grid-template-columns: 1fr; /* Одна картка в рядок */
+    gap: 20px;
+  }
+  .product-card {
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 14px;
   }
   .product-card .product-image {
-    width: 140px;
-    height: 140px;
+    width: 150px;
+    height: 150px;
+  }
+  .product-card button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px; /* Збільшено для кращого натискання на сенсорі */
+  }
+  .main-content {
+    padding: 10px;
   }
 }
 
@@ -236,6 +249,10 @@ html, body, #root {
   .form input, .form button {
     width: 100%;
     margin-bottom: 10px;
+  }
+  .sidebar button {
+    padding: 8px;
+    font-size: 14px;
   }
 }
 

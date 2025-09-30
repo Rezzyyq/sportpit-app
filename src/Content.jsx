@@ -18,9 +18,9 @@ function Content({ view, theme, toggleTheme }) {
         setLoading(true);
         const response = await axios.get("http://localhost:5000/api/products");
         // Додаємо зображення для кожного товару
-        const productsWithImages = response.data.map((product) => ({
+        const productsWithImages = response.data.map(product => ({
           ...product,
-          image: getProductImage(product.name), // Використовуємо функцію для зображень
+          image: getProductImage(product.name) // Функція для визначення зображення
         }));
         setProducts(productsWithImages);
       } catch (err) {
@@ -32,7 +32,7 @@ function Content({ view, theme, toggleTheme }) {
     fetchProducts();
   }, []);
 
-  // Функція для визначення URL зображення за назвою товару
+  // Функція для визначення URL зображення за назвою товару (з плейсхолдерами)
   const getProductImage = (name) => {
     const imageMap = {
       "Glucosamine, Chondroitin, MSM plus Hyaluronic Acid (120 caps)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01071/v/95.jpg",
@@ -40,7 +40,7 @@ function Content({ view, theme, toggleTheme }) {
       "SAMe (400 mg)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01177/v/61.jpg",
       "Black Maca (60 capsules)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/foa/foa01488/v/88.jpg",
       "Probolic-SR (1940g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00969/v/8.jpg",
-      "Dark Matter (1560g)": "https://fair.ua/image/cache/catalog/photo_prod/11953158/0_mhp-dark-matter-1560-3-44-1200x1200.jpg",
+      "Dark Matter (1560g)": "https://fair.ua/image/cache/catalog/photo_prod/11953158/0_mhp-dark-matter-1560-3-44-1200x1200.jpg", // Твій URL, чистий
       "Blade Isolate (30g)": "https://cdn.27.ua/sc--media--prod/default/fa/34/36/fa343639-4864-4423-b1a7-3da09a997ef9.jpg",
       "Beef-XP (150g)": "https://cdn.dsmcdn.com/ty1721/prod/QC_PREP/20250806/15/ca8b0f20-3fff-3cdd-b74d-8399acd18829/1_org_zoom.jpg",
       "Hyper Crush (453g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00998/l/8.jpg",
@@ -75,22 +75,19 @@ function Content({ view, theme, toggleTheme }) {
 
   const handleAddOrEdit = (e) => {
     e.preventDefault();
-    console.log("Add/Edit clicked"); // Дебаг
     if (!form.name || !form.quantity) return;
     if (editIndex !== null) {
       const updated = [...products];
-      updated[editIndex] = { ...form, image: getProductImage(form.name) }; // Оновлюємо зображення
+      updated[editIndex] = form;
       setProducts(updated);
       setEditIndex(null);
     } else {
-      setProducts([...products, { ...form, image: getProductImage(form.name) }]); // Додаємо зображення
+      setProducts([...products, form]);
     }
     setForm({ name: "", quantity: "", customer: "", date: "", image: "" });
   };
 
-  const handleDelete = (i) => (e) => {
-    e.preventDefault();
-    console.log("Delete clicked", i); // Дебаг
+  const handleDelete = (i) => {
     if (window.confirm("Видалити товар?")) {
       const updated = [...products];
       updated.splice(i, 1);
@@ -98,16 +95,12 @@ function Content({ view, theme, toggleTheme }) {
     }
   };
 
-  const handleEdit = (i) => (e) => {
-    e.preventDefault();
-    console.log("Edit clicked", i); // Дебаг
+  const handleEdit = (i) => {
     setForm(products[i]);
     setEditIndex(i);
   };
 
-  const handleSend = (i) => (e) => {
-    e.preventDefault();
-    console.log("Send clicked", i); // Дебаг
+  const handleSend = (i) => {
     const prod = products[i];
     const name = prompt("Кому відправлено?", prod.customer || "");
     const date = prompt("Введіть дату (YYYY-MM-DD)", prod.date || "");
@@ -127,7 +120,7 @@ function Content({ view, theme, toggleTheme }) {
   if (error) return <div className="content">Помилка: {error}</div>;
 
   if (view === "stats") {
-    const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity || 0), 0);
+    const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity), 0);
     return (
       <div className="content">
         <h2>Статистика</h2>
@@ -152,30 +145,27 @@ function Content({ view, theme, toggleTheme }) {
     return (
       <div className="content">
         <h2>Відправка товарів</h2>
-        {shipmentList.length === 0 ? (
-          <p>Немає відправлених товарів</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Назва</th>
-                <th>Кількість</th>
-                <th>Кому</th>
-                <th>Дата</th>
+        {shipmentList.length === 0 ? <p>Немає відправлених товарів</p> :
+        <table>
+          <thead>
+            <tr>
+              <th>Назва</th>
+              <th>Кількість</th>
+              <th>Кому</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shipmentList.map((p, i) => (
+              <tr key={i}>
+                <td>{p.name}</td>
+                <td>{p.quantity}</td>
+                <td>{p.customer}</td>
+                <td>{p.date}</td>
               </tr>
-            </thead>
-            <tbody>
-              {shipmentList.map((p, i) => (
-                <tr key={i}>
-                  <td>{p.name}</td>
-                  <td>{p.quantity}</td>
-                  <td>{p.customer}</td>
-                  <td>{p.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>}
       </div>
     );
   }
@@ -202,9 +192,9 @@ function Content({ view, theme, toggleTheme }) {
             <div className="product-name">{p.name}</div>
             <div className="product-quantity">Кількість: {p.quantity}</div>
             <div className="button-row">
-              <button onClick={handleEdit(i)}>✏️</button>
-              <button onClick={handleDelete(i)}>❌</button>
-              <button onClick={handleSend(i)}>✉️</button>
+              <button onClick={() => handleEdit(i)}>✏️</button>
+              <button onClick={() => handleDelete(i)}>❌</button>
+              <button onClick={() => handleSend(i)}>✉️</button>
             </div>
           </div>
         ))}
