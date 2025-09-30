@@ -13,26 +13,42 @@ function Content({ view, theme, toggleTheme }) {
   const [shipmentList, setShipmentList] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchOrLoadProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/api/products");
-        // Додаємо зображення для кожного товару
-        const productsWithImages = response.data.map(product => ({
+        // Спроба завантажити з Serverless Function на Vercel
+        const response = await axios.get("/api/products");
+        const productsWithImages = response.data.map((product) => ({
           ...product,
-          image: getProductImage(product.name) // Функція для визначення зображення
+          image: getProductImage(product.name),
         }));
         setProducts(productsWithImages);
+        // Зберігаємо в localStorage для резерву
+        localStorage.setItem("cachedProducts", JSON.stringify(productsWithImages));
+        console.log("Товари завантажено з API:", productsWithImages);
       } catch (err) {
-        setError("Не вдалося завантажити товари");
+        setError("Не вдалося завантажити товари з API");
+        console.error("Помилка API:", err);
+        // Якщо API не працює, завантажуємо з localStorage
+        const cachedProducts = localStorage.getItem("cachedProducts");
+        if (cachedProducts) {
+          const parsedProducts = JSON.parse(cachedProducts).map((product) => ({
+            ...product,
+            image: getProductImage(product.name),
+          }));
+          setProducts(parsedProducts);
+          console.log("Товари завантажено з localStorage:", parsedProducts);
+        } else {
+          setError("Немає кешованих даних");
+        }
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchOrLoadProducts();
   }, []);
 
-  // Функція для визначення URL зображення за назвою товару (з плейсхолдерами)
+  // Функція для визначення URL зображення за назвою товару
   const getProductImage = (name) => {
     const imageMap = {
       "Glucosamine, Chondroitin, MSM plus Hyaluronic Acid (120 caps)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01071/v/95.jpg",
@@ -40,7 +56,7 @@ function Content({ view, theme, toggleTheme }) {
       "SAMe (400 mg)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01177/v/61.jpg",
       "Black Maca (60 capsules)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/foa/foa01488/v/88.jpg",
       "Probolic-SR (1940g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00969/v/8.jpg",
-      "Dark Matter (1560g)": "https://fair.ua/image/cache/catalog/photo_prod/11953158/0_mhp-dark-matter-1560-3-44-1200x1200.jpg", // Твій URL, чистий
+      "Dark Matter (1560g)": "https://fair.ua/image/cache/catalog/photo_prod/11953158/0_mhp-dark-matter-1560-3-44-1200x1200.jpg",
       "Blade Isolate (30g)": "https://cdn.27.ua/sc--media--prod/default/fa/34/36/fa343639-4864-4423-b1a7-3da09a997ef9.jpg",
       "Beef-XP (150g)": "https://cdn.dsmcdn.com/ty1721/prod/QC_PREP/20250806/15/ca8b0f20-3fff-3cdd-b74d-8399acd18829/1_org_zoom.jpg",
       "Hyper Crush (453g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00998/l/8.jpg",
@@ -68,30 +84,58 @@ function Content({ view, theme, toggleTheme }) {
       "C.G.P - Creatine Glycerol Phosphate (400 grams)": "https://m.media-amazon.com/images/I/61-IQRr26qL._UF894,1000_QL80_.jpg",
       "Aurora Micro-Pack exoFlex": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
     };
-    return imageMap[name] || "https://via.placeholder.com/150?text=No+Image"; // За замовчуванням, якщо не знайдено
+    return imageMap[name] || "https://via.placeholder.com/150?text=No+Image";
   };
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleAddOrEdit = (e) => {
+  const handleAddOrEdit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.quantity) return;
-    if (editIndex !== null) {
-      const updated = [...products];
-      updated[editIndex] = form;
-      setProducts(updated);
-      setEditIndex(null);
-    } else {
-      setProducts([...products, form]);
+    const newProduct = { ...form, image: form.image || getProductImage(form.name) };
+    try {
+      if (editIndex !== null && products[editIndex]?._id) {
+        const response = await axios.put(`/api/products?id=${products[editIndex]._id}`, newProduct);
+        const updatedProducts = products.map((p, i) => (i === editIndex ? response.data : p));
+        setProducts(updatedProducts);
+      } else {
+        const response = await axios.post("/api/products", newProduct);
+        setProducts([...products, response.data]);
+      }
+      // Оновлюємо localStorage
+      localStorage.setItem("cachedProducts", JSON.stringify(products));
+    } catch (err) {
+      console.error("Помилка при збереженні:", err);
+      if (editIndex !== null) {
+        const updated = [...products];
+        updated[editIndex] = newProduct;
+        setProducts(updated);
+      } else {
+        setProducts([...products, newProduct]);
+      }
+      localStorage.setItem("cachedProducts", JSON.stringify(products));
     }
+    setEditIndex(null);
     setForm({ name: "", quantity: "", customer: "", date: "", image: "" });
   };
 
-  const handleDelete = (i) => {
+  const handleDelete = async (i) => {
     if (window.confirm("Видалити товар?")) {
-      const updated = [...products];
-      updated.splice(i, 1);
-      setProducts(updated);
+      try {
+        if (products[i]?._id) {
+          await axios.delete(`/api/products?id=${products[i]._id}`);
+        }
+        const updated = [...products];
+        updated.splice(i, 1);
+        setProducts(updated);
+        localStorage.setItem("cachedProducts", JSON.stringify(updated));
+      } catch (err) {
+        console.error("Помилка при видаленні:", err);
+        const updated = [...products];
+        updated.splice(i, 1);
+        setProducts(updated);
+        localStorage.setItem("cachedProducts", JSON.stringify(updated));
+      }
     }
   };
 
@@ -109,6 +153,7 @@ function Content({ view, theme, toggleTheme }) {
       updated[i] = { ...prod, customer: name, date };
       setProducts(updated);
       setShipmentList([...shipmentList, { ...prod, customer: name, date }]);
+      localStorage.setItem("cachedProducts", JSON.stringify(updated));
     }
   };
 
@@ -120,7 +165,7 @@ function Content({ view, theme, toggleTheme }) {
   if (error) return <div className="content">Помилка: {error}</div>;
 
   if (view === "stats") {
-    const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity), 0);
+    const totalQuantity = products.reduce((acc, p) => acc + Number(p.quantity || 0), 0);
     return (
       <div className="content">
         <h2>Статистика</h2>
@@ -145,27 +190,30 @@ function Content({ view, theme, toggleTheme }) {
     return (
       <div className="content">
         <h2>Відправка товарів</h2>
-        {shipmentList.length === 0 ? <p>Немає відправлених товарів</p> :
-        <table>
-          <thead>
-            <tr>
-              <th>Назва</th>
-              <th>Кількість</th>
-              <th>Кому</th>
-              <th>Дата</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shipmentList.map((p, i) => (
-              <tr key={i}>
-                <td>{p.name}</td>
-                <td>{p.quantity}</td>
-                <td>{p.customer}</td>
-                <td>{p.date}</td>
+        {shipmentList.length === 0 ? (
+          <p>Немає відправлених товарів</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Назва</th>
+                <th>Кількість</th>
+                <th>Кому</th>
+                <th>Дата</th>
               </tr>
-            ))}
-          </tbody>
-        </table>}
+            </thead>
+            <tbody>
+              {shipmentList.map((p, i) => (
+                <tr key={i}>
+                  <td>{p.name}</td>
+                  <td>{p.quantity}</td>
+                  <td>{p.customer}</td>
+                  <td>{p.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     );
   }
