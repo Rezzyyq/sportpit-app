@@ -54,6 +54,7 @@ html, body, #root {
   background-color: #ecf0f1;
   display: flex;
   flex-direction: column;
+  overflow: visible; /* Додано для видимості вмісту */
 }
 
 .site-header {
@@ -65,9 +66,11 @@ html, body, #root {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px; /* Зменшено з 50px до 30px */
+  gap: 30px;
   margin-bottom: 20px;
   flex: 1;
+  min-height: 200px; /* Додано мінімальну висоту */
+  overflow: visible; /* Додано для видимості карток */
 }
 
 .product-card {
@@ -86,7 +89,9 @@ html, body, #root {
   flex-direction: column;
   align-items: center;
   height: auto;
+  min-height: 300px; /* Додано мінімальну висоту для видимості */
   margin: 15px;
+  overflow: visible; /* Додано для видимості елементів всередині */
 }
 
 .product-card:hover {
@@ -95,8 +100,8 @@ html, body, #root {
 }
 
 .product-card .product-image {
-  width: 200px; /* Збільшено з 150px до 180px */
-  height: 200px; /* Збільшено з 150px до 180px */
+  width: 200px;
+  height: 200px;
   margin-bottom: 15px;
   border: 2px solid #e0c097;
   border-radius: 8px;
@@ -149,6 +154,8 @@ html, body, #root {
   font-size: 16px;
   width: 35px;
   height: 35px;
+  min-width: 35px; /* Додано для стабільності */
+  min-height: 35px; /* Додано для стабільності */
   transition: transform 0.2s, background 0.3s;
 }
 
@@ -214,11 +221,13 @@ html, body, #root {
     flex-direction: column;
   }
   .product-card button {
-    width: 30px;
-    height: 30px;
+    width: 40px; /* Збільшено для кращого сенсорного вводу */
+    height: 40px; /* Збільшено для кращого сенсорного вводу */
+    min-width: 40px;
+    min-height: 40px;
   }
   .product-card .product-image {
-    width: 140px; /* Зменшено з 180px для мобільних */
+    width: 140px;
     height: 140px;
   }
 }
