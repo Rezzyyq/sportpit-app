@@ -38,3 +38,6 @@ jobs:
       - name: Run backend tests
         run: npm run test
         working-directory: backend
+
+      - name: Run frontend smoke tests
+        run: npm run test:frontend

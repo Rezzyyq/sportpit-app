@@ -73,6 +73,7 @@ npm run dev
 npm run lint
 npm run build
 npm run test:backend
+npm run test:frontend
 npm run check
 ```
 
