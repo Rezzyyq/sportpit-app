@@ -1,12 +1,94 @@
-# React + Vite
+# sportpit-app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Невеликий MVP-додаток для обліку спортивних товарів:
+- **frontend**: React + Vite,
+- **backend**: Express + MongoDB (Mongoose),
+- базовий **CRUD** для товарів та простий інтерфейс відправок/статистики.
 
-Currently, two official plugins are available:
+## Структура
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `src/` — фронтенд.
+- `backend/` — API сервер і модель даних.
 
-## Expanding the ESLint configuration
+## Вимоги
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Node.js 18+
+- npm
+- MongoDB (локально або хмарно)
+
+## Налаштування
+
+### 1) Backend `.env`
+
+Створи файл `backend/.env`:
+
+```env
+MONGO_URI=mongodb://localhost:27017/sportpit
+PORT=5000
+```
+
+### 2) Frontend `.env` (опційно)
+
+Створи файл `.env` в корені, якщо API працює не на `http://localhost:5000`:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+## Встановлення залежностей
+
+У корені:
+
+```bash
+npm install
+```
+
+У backend:
+
+```bash
+cd backend
+npm install
+```
+
+## Запуск у development
+
+### Backend
+
+```bash
+cd backend
+npm start
+```
+
+### Frontend
+
+В іншому терміналі з кореня:
+
+```bash
+npm run dev
+```
+
+## Перевірки
+
+```bash
+npm run lint
+npm run build
+```
+
+## Seed-скрипти
+
+У папці `backend/` доступні:
+- `seed.js`
+- `seedShipments.js`
+- `seedShipmentsAuto.js`
+
+Запускати напряму через Node (за потреби):
+
+```bash
+cd backend
+node seed.js
+```
+
+## Примітки
+
+- Фронтенд бере API адресу з `VITE_API_URL`, або за замовчуванням `http://localhost:5000`.
+- Для коректної роботи потрібне активне підключення backend до MongoDB.
