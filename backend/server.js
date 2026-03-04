@@ -18,6 +18,10 @@ mongoose
 
 app.use("/api/products", productRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ ok: true, message: "Sportpit API is running" });
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Сервер запущено на http://localhost:${PORT}`);
 });

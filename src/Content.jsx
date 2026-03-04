@@ -3,23 +3,31 @@ import ProductsView from "./views/ProductsView";
 import SettingsView from "./views/SettingsView";
 import ShipmentView from "./views/ShipmentView";
 import StatsView from "./views/StatsView";
-import { useState } from "react";
 import "./App.css";
 
 function Content({ view, theme, toggleTheme }) {
-  const { products, setProducts, loading, error } = useProducts();
-  const [shipmentList, setShipmentList] = useState([]);
+  const {
+    products,
+    loading,
+    error,
+    actionError,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+  } = useProducts();
 
-  const handleSend = (index) => {
-    const product = products[index];
+  const shipmentList = products.filter((item) => item.customer && item.date);
+
+  const handleSend = async (product) => {
     const name = prompt("Кому відправлено?", product.customer || "");
     const date = prompt("Введіть дату (YYYY-MM-DD)", product.date || "");
 
     if (name && date) {
-      const updated = [...products];
-      updated[index] = { ...product, customer: name, date };
-      setProducts(updated);
-      setShipmentList([...shipmentList, { ...product, customer: name, date }]);
+      await updateProduct(product._id, {
+        ...product,
+        customer: name,
+        date,
+      });
     }
   };
 
@@ -30,7 +38,16 @@ function Content({ view, theme, toggleTheme }) {
   if (view === "settings") return <SettingsView theme={theme} toggleTheme={toggleTheme} />;
   if (view === "shipment") return <ShipmentView shipmentList={shipmentList} />;
 
-  return <ProductsView products={products} setProducts={setProducts} onSend={handleSend} />;
+  return (
+    <ProductsView
+      products={products}
+      onCreate={createProduct}
+      onUpdate={updateProduct}
+      onDelete={deleteProduct}
+      onSend={handleSend}
+      actionError={actionError}
+    />
+  );
 }
 
 export default Content;
