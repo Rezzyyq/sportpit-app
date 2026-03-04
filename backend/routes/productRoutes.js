@@ -1,5 +1,7 @@
 import express from "express";
 import Product from "../models/Product.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { createHttpError } from "../utils/httpError.js";
 
 const router = express.Router();
 
@@ -45,56 +47,57 @@ const validateProductPayload = (body) => {
   };
 };
 
-router.get("/", async (req, res) => {
-  try {
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
     const products = await Product.find({});
     res.json(products);
-  } catch {
-    res.status(500).json({ message: "Не вдалося завантажити товари" });
-  }
-});
+  }),
+);
 
-router.post("/", async (req, res) => {
-  const validated = validateProductPayload(req.body);
-  if (validated.error) {
-    return res.status(400).json({ message: validated.error });
-  }
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const validated = validateProductPayload(req.body);
+    if (validated.error) {
+      throw createHttpError(400, validated.error);
+    }
 
-  try {
     const newProduct = new Product(validated.value);
     const saved = await newProduct.save();
-    return res.status(201).json(saved);
-  } catch {
-    return res.status(500).json({ message: "Помилка при додаванні товару" });
-  }
-});
+    res.status(201).json(saved);
+  }),
+);
 
-router.put("/:id", async (req, res) => {
-  const validated = validateProductPayload(req.body);
-  if (validated.error) {
-    return res.status(400).json({ message: validated.error });
-  }
+router.put(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const validated = validateProductPayload(req.body);
+    if (validated.error) {
+      throw createHttpError(400, validated.error);
+    }
 
-  try {
     const updated = await Product.findByIdAndUpdate(req.params.id, validated.value, { new: true });
 
     if (!updated) {
-      return res.status(404).json({ message: "Товар не знайдено" });
+      throw createHttpError(404, "Товар не знайдено");
     }
 
-    return res.json(updated);
-  } catch {
-    return res.status(500).json({ message: "Помилка при редагуванні товару" });
-  }
-});
+    res.json(updated);
+  }),
+);
 
-router.delete("/:id", async (req, res) => {
-  try {
-    await Product.findByIdAndDelete(req.params.id);
+router.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const deleted = await Product.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      throw createHttpError(404, "Товар не знайдено");
+    }
+
     res.json({ message: "Товар видалено" });
-  } catch {
-    res.status(500).json({ message: "Помилка при видаленні товару" });
-  }
-});
+  }),
+);
 
 export default router;
