@@ -4,8 +4,8 @@ export default function StatsView({ products }) {
   return (
     <div className="content">
       <h2>Статистика</h2>
-      <div>📦 Всього товарів: {products.length}</div>
-      <div>📊 Загальна кількість: {totalQuantity}</div>
+      <div>Всього товарів: {products.length}</div>
+      <div>Загальна кількість: {totalQuantity}</div>
     </div>
   );
 }

@@ -18,17 +18,12 @@ function Content({ view, theme, toggleTheme }) {
 
   const shipmentList = products.filter((item) => item.customer && item.date);
 
-  const handleSend = async (product) => {
-    const name = prompt("Кому відправлено?", product.customer || "");
-    const date = prompt("Введіть дату (YYYY-MM-DD)", product.date || "");
-
-    if (name && date) {
-      await updateProduct(product._id, {
-        ...product,
-        customer: name,
-        date,
-      });
-    }
+  const handleSend = async (product, shipment) => {
+    return updateProduct(product._id, {
+      ...product,
+      customer: shipment.customer,
+      date: shipment.date,
+    });
   };
 
   if (loading) return <div className="content">Завантаження...</div>;

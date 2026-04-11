@@ -37,7 +37,8 @@ test("ProductsView contains CRUD action UI and error rendering", () => {
   assert.match(view, /onUpdate/);
   assert.match(view, /onDelete/);
   assert.match(view, /actionError/);
-  assert.match(view, /Видалити товар\?/);
+  assert.match(view, /Видал\./);
+  assert.match(view, /Зберегти відправку/);
   assert.match(view, /type="submit"/);
 });
 

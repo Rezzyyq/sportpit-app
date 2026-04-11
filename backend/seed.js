@@ -32,10 +32,10 @@ const initialProducts = [
   { name: "Probolic-SR (1940g)", quantity: 2, customer: "", date: "" },
   { name: "Testofx (80 caps)", quantity: 1, customer: "", date: "" },
   { name: "The last emperor (240 caps)", quantity: 1, customer: "", date: "" },
-  { name: "Urolithin A NAD+ (120 caps - пошкодженна упаковка)", quantity: 1, customer: "", date: "" },
+  { name: "Urolithin A NAD+ (120 caps - пошкоджена упаковка)", quantity: 1, customer: "", date: "" },
   { name: "Cla95 (30 soft)", quantity: 1, customer: "", date: "" },
-  { name: "Impact hydration (3,200mg) - пунш", quantity: 2, customer: "", date: "" },
-  { name: "Impact hydration (3,200mg) - лимон", quantity: 1, customer: "", date: "" },
+  { name: "Impact hydration (3,200mg) - punch", quantity: 2, customer: "", date: "" },
+  { name: "Impact hydration (3,200mg) - lemon", quantity: 1, customer: "", date: "" },
   { name: "Tart Cherry (60 gummies)", quantity: 1, customer: "", date: "" },
   { name: "Collagen peptides (198g)", quantity: 2, customer: "", date: "" },
   { name: "Protein bar 33% (50g chocolate flavour)", quantity: 3, customer: "", date: "" },
@@ -74,18 +74,18 @@ const initialProducts = [
 const seedDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ Підключено до MongoDB");
+    console.log("Підключено до MongoDB");
 
     await Product.deleteMany({});
-    console.log("🗑 Колекція очищена");
+    console.log("Колекція очищена");
 
     await Product.insertMany(initialProducts);
-    console.log(`📦 Додано ${initialProducts.length} товарів`);
+    console.log(`Додано ${initialProducts.length} товарів`);
 
     mongoose.disconnect();
-    console.log("🔌 Відключено від MongoDB");
+    console.log("Відключено від MongoDB");
   } catch (err) {
-    console.log("❌ Помилка при seed:", err);
+    console.log("Помилка при seed:", err);
   }
 };
 

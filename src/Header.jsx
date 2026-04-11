@@ -1,10 +1,9 @@
 function Header() {
   return (
-    <header className="header">
-      <h1>📦 Офіцерський пептід</h1>
+    <header className="site-header">
+      <h1>Офіцерський пептид</h1>
     </header>
   );
 }
 
 export default Header;
-

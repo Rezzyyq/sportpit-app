@@ -46,6 +46,10 @@ html, body, #root {
   background-color: #1abc9c;
 }
 
+.sidebar button.active {
+  background-color: #1abc9c;
+}
+
 .main-content {
   flex: 1;
   min-height: 100vh;
@@ -145,15 +149,15 @@ html, body, #root {
 }
 
 .product-card button {
-  padding: 6px;
+  padding: 6px 10px;
   margin: 0;
   border: none;
   border-radius: 4px;
   background: linear-gradient(45deg, #d4a373, #b0865a);
   color: white;
   cursor: pointer;
-  font-size: 16px;
-  width: 35px;
+  font-size: 14px;
+  min-width: 62px;
   height: 35px;
   transition: transform 0.2s, background 0.3s;
 }
@@ -187,6 +191,24 @@ html, body, #root {
 }
 
 .form button {
+  padding: 8px 15px;
+  border-radius: 4px;
+}
+
+.shipment-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.shipment-form input {
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.shipment-form button {
   padding: 8px 15px;
   border-radius: 4px;
 }
@@ -236,9 +258,9 @@ html, body, #root {
     height: 150px;
   }
   .product-card button {
-    width: 40px;
+    min-width: 68px;
     height: 40px;
-    font-size: 18px; /* Збільшено для кращого натискання на сенсорі */
+    font-size: 14px; /* Збільшено для кращого натискання на сенсорі */
   }
   .main-content {
     padding: 10px;
@@ -255,9 +277,6 @@ html, body, #root {
     font-size: 14px;
   }
 }
-
-
-
 
 
 

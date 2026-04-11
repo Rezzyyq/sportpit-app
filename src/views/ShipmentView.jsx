@@ -15,8 +15,8 @@ export default function ShipmentView({ shipmentList }) {
             </tr>
           </thead>
           <tbody>
-            {shipmentList.map((p, i) => (
-              <tr key={i}>
+            {shipmentList.map((p) => (
+              <tr key={p._id}>
                 <td>{p.name}</td>
                 <td>{p.quantity}</td>
                 <td>{p.customer}</td>

@@ -22,7 +22,7 @@ export default function ProductTable({ products, onEdit, onDelete }) {
           </thead>
           <tbody>
             {products.map((p, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? "#1f1f1f" : "#2a2a2a" }}>
+              <tr key={p._id || p.name || i} style={{ background: i % 2 === 0 ? "#1f1f1f" : "#2a2a2a" }}>
                 <td>{p.name}</td>
                 <td>{p.quantity}</td>
                 <td>{p.customer}</td>
@@ -35,7 +35,7 @@ export default function ProductTable({ products, onEdit, onDelete }) {
                     background: "#2196f3",
                     color: "#fff",
                     cursor: "pointer",
-                  }}>✏️</button>
+                  }}>Редаг.</button>
                   <button onClick={() => onDelete(i)} style={{
                     padding: "5px 10px",
                     borderRadius: "5px",
@@ -43,7 +43,7 @@ export default function ProductTable({ products, onEdit, onDelete }) {
                     background: "#f44336",
                     color: "#fff",
                     cursor: "pointer",
-                  }}>❌</button>
+                  }}>Видал.</button>
                 </td>
               </tr>
             ))}
