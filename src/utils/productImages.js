@@ -5,21 +5,21 @@ const imageMap = {
   "Black Maca (60 capsules)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/foa/foa01488/v/88.jpg",
   "AMPK Metabolic Activator (30 tabls)": "https://raceexpert.com.ua/image/cache/catalog/b46a4125-0e23-11f0-82f4-00155d9a5309-800x800.jpg",
   "Probolic-SR (1940g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00969/v/8.jpg",
-  "Dark Matter (1560g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00876/l/34.jpg",
+  "Dark Matter (1560g)": "https://fair.ua/image/cache/catalog/photo_prod/11953158/0_mhp-dark-matter-1560-3-44-1200x1200.jpg",
   "Blade Isolate (30g)": "https://cdn.27.ua/sc--media--prod/default/fa/34/36/fa343639-4864-4423-b1a7-3da09a997ef9.jpg",
   "Beef-XP (150g)": "https://cdn.dsmcdn.com/ty1721/prod/QC_PREP/20250806/15/ca8b0f20-3fff-3cdd-b74d-8399acd18829/1_org_zoom.jpg",
   "Hyper Crush (453g)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mhp/mhp00998/l/8.jpg",
-  "Urolithin A NAD+ (120 caps)": "https://erp.vitamingy.com/storage/10982/New-Project---2025-03-06T113842.617.jpg",
+  "Urolithin A NAD+ (120 caps)": "https://content2.rozetka.com.ua/goods/images/big/461240529.jpg",
   "Cortisol Health (120 caps)": "https://sfs.in.ua/image/cache/catalog/image/cache/catalog/totariahealthcortisolhealth10-in-1120caps-240x159.webp",
-  "Animal stak Comprehensive Support Pack (132g)": "https://www.bulldognutrition.com/cdn/shop/products/Animal-Stak-new-packaging.jpg?v=1667628972&width=1080",
+  "Animal stak Comprehensive Support Pack (132g)": "https://bodymarket.ua/img/p/6/2/3/3/6233-thickbox_default.jpg",
   "Animal stak Comprehensive Non-Hormonal Pack (213g)": "https://proteinchik.com.ua/media/catalog/product/cache/86c09c8a9880d08b8d2931d1691b11a4/m/s/mstak_feb2023_1.jpeg",
-  "Amino power Liquid (500ml)": "https://lifestylehealthstore.co.uk/cdn/shop/files/image_2022-04-11_6253e6b07ae47_700x.jpg?v=1737383985",
+  "Amino power Liquid (500ml)": "https://f3.in.ua/content/images/31/600x600l80nn50/nutrend-amino-power-liquid-500ml-49332321870098.webp",
   "MST MSM1000": "https://mstnutrition.ua/wp-content/uploads/2021/04/MSM-2-1024x1024.png",
   "The last emperor (240 caps)": "https://100kg.in.ua/image/cache/catalog/fitnessnutrition/242/IMG2425651bfb955663f187fe06dfee10e6-1000x1000.jpg",
   "Bee propolis (120 caps)": "https://pwa-api.eva.ua/img/512/512/resize/8/5/859929_1_1722009330.jpg",
   "Phosphatidyl Serine (60 caps)": "https://powerway.com.ua/upload/iblock/2f6/r2y7hbckgieklsty1innwq705evl2755.jpg",
   "Forskolin (60 cups)": "https://m.media-amazon.com/images/I/61mF8HoUduL.jpg_BO30,255,255,255_UF900,850_SR1910,1000,0,C_QL100_.jpg",
-  "Testofx (80 caps)": "https://www.allmaxnutrition.com/cdn/shop/products/TFXSPORT-US1001-MAIN.jpg?v=1753885528&width=600",
+  "Testofx (80 caps)": "https://www.rhinomuscle.com/image/cache/catalog/Images_Product/Allmax-Nutrition/TESTOFX-1-600x315.jpg",
   "Crass-fed Bone Marrow (180 caps)": "https://bio.org.ua/cache/i/d7/34/26717/530.jpg",
   "Serrapeptase (120 caps)": "https://static1.biotus.ua/media/catalog/product/n/c/ncs-67399_1.jpg?store=rus&image-type=image",
   "Liposomal Vitamin C (20 mL)": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIWLs-i3KmEWaF0HQDZxfJldrjaJnNz6Dr-m2sNGpNaJu8Wik5kT6JwVEy995HQgO6qjI&usqp=CAU",
@@ -40,7 +40,6 @@ const imageMap = {
   "Liposomal Vitamin C (3000 mg)": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIWLs-i3KmEWaF0HQDZxfJldrjaJnNz6Dr-m2sNGpNaJu8Wik5kT6JwVEy995HQgO6qjI&usqp=CAU",
   "exoFlex (10 ml)": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
   "Urolithin A NAD+ (120 caps - пошкоджена упаковка)": "https://content2.rozetka.com.ua/goods/images/big/461240529.jpg",
-  "Urolithin A NAD+ (120 caps - пошкодженна упаковка)": "https://content2.rozetka.com.ua/goods/images/big/461240529.jpg",
   "Aurora exoFlex 30 multi pack до 11/2026": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
   "Aurora exoFlex 30 multi pack до 02/2026 (просрочка)": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
   "California Gold Nutrition SAMe (400 mg 60 tabls)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01177/v/61.jpg",
@@ -82,5 +81,3 @@ const imageMap = {
 };
 
 export const getProductImage = (name) => imageMap[name] || "https://via.placeholder.com/150?text=No+Image";
-
-export const hasProductImage = (name) => Object.hasOwn(imageMap, name);
