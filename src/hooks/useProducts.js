@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { getProductImage } from "../utils/productImages";
+import { getProductImage, hasProductImage } from "../utils/productImages";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 
 const normalizeProduct = (product) => ({
   ...product,
-  image: product.image || getProductImage(product.name),
+  image: hasProductImage(product.name) ? getProductImage(product.name) : product.image || getProductImage(product.name),
 });
 
 export default function useProducts() {

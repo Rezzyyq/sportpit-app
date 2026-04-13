@@ -62,6 +62,7 @@ test("useProducts exposes API CRUD methods and action errors", () => {
   assert.match(hook, /const updateProduct = async/);
   assert.match(hook, /const deleteProduct = async/);
   assert.match(hook, /setActionError/);
+  assert.match(hook, /hasProductImage/);
   assert.doesNotMatch(hook, /localhost:5000/);
   assert.match(hook, /return \{/);
 });

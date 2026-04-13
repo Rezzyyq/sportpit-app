@@ -8,7 +8,9 @@ export default function connectDatabase(mongoUri = process.env.MONGO_URI) {
   }
 
   if (!mongoUri) {
-    return Promise.reject(new Error("MONGO_URI is not configured"));
+    const error = new Error("MONGO_URI is not configured");
+    error.publicMessage = "MONGO_URI не налаштований у Vercel";
+    return Promise.reject(error);
   }
 
   if (!connectionPromise) {

@@ -10,8 +10,12 @@ const sendApiError = (res, error) => {
     return res.status(400).json({ message: error.message });
   }
 
+  if (error.publicMessage) {
+    return res.status(500).json({ message: error.publicMessage });
+  }
+
   console.error("Vercel API error:", error);
-  return res.status(500).json({ message: "Не вдалося виконати запит до API" });
+  return res.status(500).json({ message: "Не вдалося підключитися до MongoDB. Перевір MONGO_URI у Vercel та доступ MongoDB Atlas." });
 };
 
 export default async function handler(req, res) {

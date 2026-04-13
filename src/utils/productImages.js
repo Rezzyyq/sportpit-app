@@ -81,3 +81,5 @@ const imageMap = {
 };
 
 export const getProductImage = (name) => imageMap[name] || "https://via.placeholder.com/150?text=No+Image";
+
+export const hasProductImage = (name) => Object.hasOwn(imageMap, name);
