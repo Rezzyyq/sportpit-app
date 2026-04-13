@@ -73,3 +73,16 @@ test("Vite proxies API requests for mobile dev access", () => {
   assert.match(config, /"\/api"/);
   assert.match(config, /localhost:5000/);
 });
+
+test("Vercel exposes product API routes for production", () => {
+  assert.equal(fs.existsSync("api/products.js"), true);
+  assert.equal(fs.existsSync("api/products/[id].js"), true);
+
+  const listRoute = read("api/products.js");
+  const itemRoute = read("api/products/[id].js");
+
+  assert.match(listRoute, /Product\.find/);
+  assert.match(listRoute, /Product\(validated\.value\)/);
+  assert.match(itemRoute, /findByIdAndUpdate/);
+  assert.match(itemRoute, /findByIdAndDelete/);
+});
