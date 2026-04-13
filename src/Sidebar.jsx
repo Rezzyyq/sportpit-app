@@ -2,7 +2,7 @@ function Sidebar({ onSelect, activeView }) {
   const items = [
     { id: "products", label: "Каталог товарів" },
     { id: "stats", label: "Статистика" },
-    { id: "shipment", label: "Відправка" },
+    { id: "shipment", label: "Відправки" },
     { id: "settings", label: "Налаштування" },
   ];
 

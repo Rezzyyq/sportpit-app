@@ -28,6 +28,7 @@ test("Content.jsx composes views and uses product hook", () => {
   assert.match(content, /<SettingsView/);
   assert.match(content, /<ShipmentView/);
   assert.match(content, /<ProductsView/);
+  assert.match(content, /Не вдалося завантажити каталог/);
 });
 
 test("ProductsView contains CRUD action UI and error rendering", () => {
@@ -37,16 +38,18 @@ test("ProductsView contains CRUD action UI and error rendering", () => {
   assert.match(view, /onUpdate/);
   assert.match(view, /onDelete/);
   assert.match(view, /actionError/);
-  assert.match(view, /Видал\./);
+  assert.match(view, /Видалити/);
   assert.match(view, /Зберегти відправку/);
   assert.match(view, /type="submit"/);
+  assert.match(view, /Нічого не знайдено/);
 });
 
-test("useProducts exposes API CRUD methods", () => {
+test("useProducts exposes API CRUD methods and readable errors", () => {
   const hook = read("src/hooks/useProducts.js");
 
   assert.match(hook, /const createProduct = async/);
   assert.match(hook, /const updateProduct = async/);
   assert.match(hook, /const deleteProduct = async/);
+  assert.match(hook, /Не вдалося додати товар/);
   assert.match(hook, /return \{/);
 });

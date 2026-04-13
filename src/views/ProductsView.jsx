@@ -79,64 +79,126 @@ export default function ProductsView({ products, onCreate, onUpdate, onDelete, o
       image: product.image || "",
     });
     setEditId(product._id);
+    setPendingDeleteId(null);
   };
 
   return (
     <div className="content">
-      {actionError && <p style={{ color: "#ff6b6b" }}>Помилка: {actionError}</p>}
+      <section className="panel catalog-hero">
+        <div>
+          <p className="eyebrow">Каталог</p>
+          <h2>Товари на складі</h2>
+          <p>Додавай позиції, редагуй залишки і готуй відправки з одного екрану.</p>
+        </div>
+        <div className="catalog-count">
+          <strong>{filteredProducts.length}</strong>
+          <span>{filteredProducts.length === 1 ? "позиція" : "позицій"}</span>
+        </div>
+      </section>
 
-      <input
-        type="text"
-        placeholder="Пошук..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="search-input"
-      />
+      {actionError && (
+        <p className="inline-error" role="alert">
+          Помилка: {actionError}
+        </p>
+      )}
 
-      <form onSubmit={handleAddOrEdit} className="form">
-        <input type="text" name="name" placeholder="Назва товару" value={form.name} onChange={handleChange} required />
-        <input type="number" name="quantity" placeholder="Кількість" value={form.quantity} onChange={handleChange} required />
-        <input type="text" name="image" placeholder="URL зображення" value={form.image} onChange={handleChange} />
-        <button type="submit">{editId ? "Зберегти" : "Додати"}</button>
+      <label className="search-field">
+        <span>Пошук товару</span>
+        <input
+          type="text"
+          placeholder="Наприклад: Creatine"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="search-input"
+        />
+      </label>
+
+      <form onSubmit={handleAddOrEdit} className="product-form">
+        <div className="form-heading">
+          <h3>{editId ? "Редагування товару" : "Новий товар"}</h3>
+          {editId && (
+            <button type="button" className="ghost-action" onClick={resetForm}>
+              Скасувати редагування
+            </button>
+          )}
+        </div>
+        <label>
+          <span>Назва товару</span>
+          <input type="text" name="name" value={form.name} onChange={handleChange} required />
+        </label>
+        <label>
+          <span>Кількість</span>
+          <input type="number" min="0" name="quantity" value={form.quantity} onChange={handleChange} required />
+        </label>
+        <label>
+          <span>URL зображення</span>
+          <input type="url" name="image" value={form.image} onChange={handleChange} placeholder="Необов'язково" />
+        </label>
+        <button type="submit" className="primary-action">
+          {editId ? "Зберегти зміни" : "Додати товар"}
+        </button>
       </form>
 
       {shippingProduct && (
         <form onSubmit={handleShipmentSubmit} className="shipment-form">
           <strong>Відправка: {shippingProduct.name}</strong>
-          <input
-            type="text"
-            placeholder="Кому"
-            value={shippingForm.customer}
-            onChange={(e) => setShippingForm({ ...shippingForm, customer: e.target.value })}
-            required
-          />
-          <input
-            type="date"
-            value={shippingForm.date}
-            onChange={(e) => setShippingForm({ ...shippingForm, date: e.target.value })}
-            required
-          />
-          <button type="submit">Зберегти відправку</button>
-          <button type="button" onClick={() => setShippingProduct(null)}>Скасувати</button>
+          <label>
+            <span>Отримувач</span>
+            <input
+              type="text"
+              value={shippingForm.customer}
+              onChange={(e) => setShippingForm({ ...shippingForm, customer: e.target.value })}
+              required
+            />
+          </label>
+          <label>
+            <span>Дата</span>
+            <input
+              type="date"
+              value={shippingForm.date}
+              onChange={(e) => setShippingForm({ ...shippingForm, date: e.target.value })}
+              required
+            />
+          </label>
+          <button type="submit" className="primary-action">Зберегти відправку</button>
+          <button type="button" className="ghost-action" onClick={() => setShippingProduct(null)}>
+            Скасувати
+          </button>
         </form>
       )}
 
-      <div className="product-grid">
-        {filteredProducts.map((p) => (
-          <div key={p._id} className="product-card">
-            {p.image && <img src={p.image} alt={p.name} className="product-image" />}
-            <div className="product-name">{p.name}</div>
-            <div className="product-quantity">Кількість: {p.quantity}</div>
-            <div className="button-row">
-              <button type="button" onClick={() => handleEdit(p)} aria-label={`Редагувати ${p.name}`}>Редаг.</button>
-              <button type="button" onClick={() => handleDelete(p._id)} aria-label={`Видалити ${p.name}`}>
-                {pendingDeleteId === p._id ? "Так?" : "Видал."}
-              </button>
-              <button type="button" onClick={() => handleStartShipment(p)} aria-label={`Відправити ${p.name}`}>Відпр.</button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {filteredProducts.length === 0 ? (
+        <div className="empty-state">
+          <h3>Нічого не знайдено</h3>
+          <p>Спробуй інший запит або додай новий товар через форму вище.</p>
+        </div>
+      ) : (
+        <div className="product-grid">
+          {filteredProducts.map((p) => (
+            <article key={p._id} className="product-card">
+              {p.image && <img src={p.image} alt={p.name} className="product-image" />}
+              <div className="product-card-body">
+                <h3 className="product-name">{p.name}</h3>
+                <p className="product-quantity">Кількість: {p.quantity}</p>
+                {p.customer && p.date && (
+                  <p className="shipment-note">Відправка: {p.customer}, {p.date}</p>
+                )}
+              </div>
+              <div className="button-row">
+                <button type="button" onClick={() => handleEdit(p)} aria-label={`Редагувати ${p.name}`}>
+                  Редагувати
+                </button>
+                <button type="button" onClick={() => handleDelete(p._id)} aria-label={`Видалити ${p.name}`}>
+                  {pendingDeleteId === p._id ? "Підтвердити" : "Видалити"}
+                </button>
+                <button type="button" onClick={() => handleStartShipment(p)} aria-label={`Відправити ${p.name}`}>
+                  Відправити
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
