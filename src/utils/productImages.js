@@ -40,6 +40,7 @@ const imageMap = {
   "Liposomal Vitamin C (3000 mg)": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIWLs-i3KmEWaF0HQDZxfJldrjaJnNz6Dr-m2sNGpNaJu8Wik5kT6JwVEy995HQgO6qjI&usqp=CAU",
   "exoFlex (10 ml)": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
   "Urolithin A NAD+ (120 caps - пошкоджена упаковка)": "https://content2.rozetka.com.ua/goods/images/big/461240529.jpg",
+  "Urolithin A NAD+ (120 caps - пошкодженна упаковка)": "https://content2.rozetka.com.ua/goods/images/big/461240529.jpg",
   "Aurora exoFlex 30 multi pack до 11/2026": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
   "Aurora exoFlex 30 multi pack до 02/2026 (просрочка)": "https://static1.biotus.ua/media/catalog/product/a/u/aun-64822.png?store=rus&image-type=image",
   "California Gold Nutrition SAMe (400 mg 60 tabls)": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01177/v/61.jpg",
