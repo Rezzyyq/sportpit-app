@@ -62,5 +62,14 @@ test("useProducts exposes API CRUD methods and action errors", () => {
   assert.match(hook, /const updateProduct = async/);
   assert.match(hook, /const deleteProduct = async/);
   assert.match(hook, /setActionError/);
+  assert.doesNotMatch(hook, /localhost:5000/);
   assert.match(hook, /return \{/);
+});
+
+test("Vite proxies API requests for mobile dev access", () => {
+  const config = read("vite.config.js");
+
+  assert.match(config, /proxy/);
+  assert.match(config, /"\/api"/);
+  assert.match(config, /localhost:5000/);
 });
